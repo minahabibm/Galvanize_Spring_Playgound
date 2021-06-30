@@ -8,17 +8,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FlightsController {
 
-    @GetMapping("/")
+    @GetMapping("/flights")
     public String defaultEndpoint() {
         return "";
     }
 
     @PostMapping("/flights/tickets/total")
-    public FlightsResponse ticketTotalStringLiteral(@RequestBody FlightsService body) {
+    public String ticketTotalStringLiteral(@RequestBody FlightsService body) {
 
-        FlightsResponse response = new FlightsResponse(body);
+        int result = 0;
+        for (FlightsService.Tickets ticket: body.getTickets())
+            result += ticket.getPrice();
 
-        return response;
+        return String.format("{ result: %d }", result);
     }
 
 }

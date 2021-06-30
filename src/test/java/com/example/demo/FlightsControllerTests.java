@@ -41,6 +41,7 @@ public class FlightsControllerTests {
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result", is(350)));
+                .andExpect(content().string("{ result: 350 }"));
+//                .andExpect(jsonPath("$.result", is(350)));
     }
 }
