@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 class FlightsService {
-    private List<Tickets> tickets = new ArrayList();
+    private List<Tickets> tickets;
+    public int result;
+
+    FlightsService(){
+        tickets = new ArrayList();
+    }
 
     public List<Tickets> getTickets() {
         return tickets;
