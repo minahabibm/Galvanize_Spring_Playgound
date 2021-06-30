@@ -16,12 +16,12 @@ public class FlightsController {
     }
 
     @PostMapping("/flights/tickets/total")
-    public Map<String, Integer> ticketTotalStringLiteral(@RequestBody FlightsService body) {
+    public FlightsService ticketTotalStringLiteral(@RequestBody FlightsService body) {
 
 
 
         Map <String, Integer> map = new HashMap<String, Integer>();
         map.put("result", 350);
-        return (Map<String, Integer>) body;
+        return body;
     }
 }
