@@ -1,5 +1,12 @@
 package com.example.demo;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import static org.hamcrest.Matchers.is;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FlightsController.class)
@@ -86,4 +88,28 @@ public class FlightsControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("result", is(350)));
     }
+
+    @Test
+    public void ticketTotalFileFixturesTest() throws Exception{
+
+        String json = getJSON("/data.json");
+
+        MockHttpServletRequestBuilder request = post("/flights/tickets/total")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("result", is(350)));
+    }
+
+    private String getJSON(String path) throws Exception {
+        final URL jsonResourceLocation = this.getClass().getResource(path);
+        assertNotNull(jsonResourceLocation, "json path resource location is null.");
+        File f = new File(jsonResourceLocation.getPath());
+        final String jsonString = Files.readString(f.toPath());
+        return jsonString;
+    }
+
+
 }
