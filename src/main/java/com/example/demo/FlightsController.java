@@ -17,19 +17,9 @@ public class FlightsController {
     }
 
     @PostMapping("/flights/tickets/total")
-    public Map<String, Integer> ticketTotalStringLiteral(@RequestBody FlightsService body) {
-        int price=0;
-        for (FlightsService.Tickets fl: body.getTickets()) {
-            price+=fl.getPrice();
-        }
-//        int result = 0;
-//        for (FlightsService.Tickets ticket: body.getTickets())
-//            result += ticket.getPrice();
-//
-//        return String.format("{ result: %d }", result);
-        Map<String, Integer> map = new HashMap<>();
-        map.put("result",price);
-        return map;
+    public FlightsResponse ticketTotal(@RequestBody FlightsService body) {
+        FlightsResponse flightResponse = new FlightsResponse(body);
+        return flightResponse;
     }
 
 }

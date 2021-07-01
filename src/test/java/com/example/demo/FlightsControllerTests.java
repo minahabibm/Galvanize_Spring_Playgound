@@ -1,16 +1,18 @@
 package com.example.demo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,9 +28,11 @@ public class FlightsControllerTests {
     @Autowired
     private MockMvc mvc;
 
+    ObjectMapper objectMapper = new ObjectMapper();
+
     @Test
-    public void endpoinUrlTest() throws Exception {
-        this.mvc.perform(get("/").accept(MediaType.TEXT_PLAIN))
+    public void endpointUrlTest() throws Exception {
+        this.mvc.perform(get("/flights").accept(MediaType.TEXT_PLAIN))
                 .andExpect(status().isOk());
     }
 
@@ -40,8 +44,46 @@ public class FlightsControllerTests {
                 .content("{\"tickets\":[{\"passenger\":{\"firstName\":\"Some name\",\"lastName\":\"Some other name\"},\"price\":200},{\"passenger\":{\"firstName\":\"Name B\",\"lastName\":\"Name C\"},\"price\":150}]}");
 
         this.mvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void ticketTotalSerializingJacksonTest() throws Exception{
+        HashMap<String, String> person0 = new HashMap<String, String>(){
+            {
+                put("firstName", "Hercules");
+                put("lastName", "someone");
+            }
+        };
+        HashMap<String, Object> ticket0 = new HashMap<>();
+        ticket0.put("passenger", person0);
+        ticket0.put("price", 150);
+
+        HashMap<String, String> person1= new HashMap<String, String>(){
+            {
+                put("firstName", "John");
+                put("lastName", "Doe");
+            }
+        };
+        HashMap<String, Object> ticket1 = new HashMap<>();
+        ticket1.put("passenger", person1);
+        ticket1.put("price", 200);
+
+        List tickets = new ArrayList<>();
+        tickets.add(ticket0);
+        tickets.add(ticket1);
+
+        HashMap<String, List> list = new HashMap<>();
+        list.put("tickets",tickets);
+
+        String json = objectMapper.writeValueAsString(list);
+
+        MockHttpServletRequestBuilder request = post("/flights/tickets/total")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        this.mvc.perform(request)
                 .andExpect(status().isOk())
-//                .andExpect(content().string("{ result: 350 }"));
                 .andExpect(jsonPath("result", is(350)));
     }
 }
